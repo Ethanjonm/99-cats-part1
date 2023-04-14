@@ -11,11 +11,15 @@
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
+require 'action_view'
+
 class Cat < ApplicationRecord
+    include ActionView::Helpers::DateHelper
+
     CAT_COLORS = ['Orange', 'Tabby', 'Black', 'White', 'Gray', 'Grey', 'Brown']
 
     
-    validates :color, :name, :birth_date, :sex, prescence: true
+    validates :color, :name, :birth_date, :sex, presence: true
     validates :color, inclusion: {in: CAT_COLORS}
     validates :sex, inclusion: { in: ['M', 'F'] }
     validate :birth_date_cannot_be_future
@@ -24,5 +28,9 @@ class Cat < ApplicationRecord
         if birth_date && birth_date > Date.today
             errors.add(:birth_date, "No time traveling cats.")
         end
+    end
+
+    def age
+        time_ago_in_words(self.birth_date)
     end
 end
